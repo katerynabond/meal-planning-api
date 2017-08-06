@@ -1,8 +1,10 @@
 const express = require ('express');
 const router = express.Router();
+// test data
+const meal1 = require('./testdata/meal1'); 
 
 router.get('/meal', (request, response) => {
-  response.send('Meal to come');
+  response.json(meal1);
 });
 
 
