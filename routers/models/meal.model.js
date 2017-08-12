@@ -12,5 +12,5 @@ const mealSchema = new Schema({
     courses: [String]
 });
 
-const Meal = mongoose.model('Meal', mealSchema, "Meals");
+const Meal = mongoose.model('Meal', mealSchema, 'Meals');
 module.exports = Meal;

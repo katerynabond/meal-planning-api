@@ -1,9 +1,10 @@
-const express = require ('express');
+const express = require('express');
 const router = express.Router();
 // test data
-const meal1 = require('./testdata/meal1'); 
-const mealsList = require('./testdata/meals'); 
+const meal1 = require('./testdata/meal1');
+const mealsList = require('./testdata/meals');
 const Meal = require('./models/meal.model');
+const Plan = require('./models/plan.model');
 
 
 router.get('/meal/:date/:course', (request, response) => {
@@ -15,11 +16,22 @@ router.get('/meal/:date/:course', (request, response) => {
   response.json(mealToReturn);
 });
 
+router.get('/plan/:week/:course', (request, response) => {
+  var d = new Date(request.params.week);
+  console.log(`getting plan for week of ${d} course:${request.params.course}`);
+  Plan.findOne({ week: d, course: request.params.course })
+    .populate('meals')
+    .exec((err, plan) => {
+      if (err) return response.status(500).json({ error: err });
+      response.json(plan.meals);
+    });
+});
+
 router.get('/meals/:course', (request, response) => {
   console.log(`/meals/:course course:${request.params.course}`);
-  Meal.find({}, (err, meals)=>{
-    if (err) response.status(500).json({error: err});
-    return response.json(meals);
+  Meal.find({ courses: request.params.course }, (err, meals) => {
+    if (err) return response.status(500).json({ error: err });
+    response.json(meals);
   });
 
   // var list = JSON.parse(JSON.stringify(mealsList));
