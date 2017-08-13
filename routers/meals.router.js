@@ -8,11 +8,27 @@ const Plan = require('./models/plan.model');
 
 router.get('/meal/:date/:course', (request, response) => {
   console.log(`requesting date:${request.params.date} course:${request.params.course}`);
-  var d = new Date(request.params.date);
-  var mealToReturn = JSON.parse(JSON.stringify(meal1));
-  mealToReturn.description += ` (${request.params.course})`;
-  mealToReturn.description += ` for date:${d.toDateString()}`;
-  response.json(mealToReturn);
+  var week = new Date(request.params.date);
+  while(week.getDay()!=0) { // looking for sunday
+    week.setDate(d.getDate()-1);
+  }
+
+  var dayOfWeek = new Date(request.params.date).getDay();
+
+  console.log(`week:${week} day of week:${dayOfWeek}`);
+
+  Plan.findOne({ week: week, course: request.params.course })
+    .populate('meals')
+    .exec((err, plan) => {
+      if (err) return response.status(500).json({ error: err });
+      if (!plan) return response.json({}); // no plan - empty response
+      return response.json(plan.meals[dayOfWeek]);
+    });
+
+  // var mealToReturn = JSON.parse(JSON.stringify(meal1));
+  // mealToReturn.description += ` (${request.params.course})`;
+  // mealToReturn.description += ` for date:${d.toDateString()}`;
+  // response.json(mealToReturn);
 });
 
 router.get('/plan/:week/:course', (request, response) => {
