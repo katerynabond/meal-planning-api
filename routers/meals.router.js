@@ -27,6 +27,47 @@ router.get('/plan/:week/:course', (request, response) => {
     });
 });
 
+router.post('/plan/:week/:course', (request, response) => {
+  console.log(`[POST] plan add week:${request.params.week} course:${request.params.course} mealId:${request.body.mealId}`);
+  var date = new Date(request.params.week);
+  Plan.findOne({ week: date, course: request.params.course }, (err, plan) => {
+    if (!plan) { // No plan found for this week, creating
+      var plan = new Plan({
+        week: date,
+        course: request.params.course,
+        meals: [request.body.mealId]
+      });
+      plan.save((err, plan) => {
+        if (err) return response.status(500).json({ error: err });
+        response.json({ success: true });
+      });
+    } else { // Plan found, adding meal
+      plan.meals.push(request.body.mealId);
+      plan.save((err, plan) => {
+        if (err) return response.status(500).json({ error: err });
+        response.json({ success: true });
+      });
+    }
+  });
+});
+
+router.delete('/plan/:week/:course/:mealId', (request, response) => {
+  console.log(`[DELETE] plan add week:${request.params.week} course:${request.params.course} mealId:${request.params.mealId}`);
+  var date = new Date(request.params.week);
+  Plan.findOne({ week: date, course: request.params.course }, (err, plan) => {
+    if (plan) {
+      var index = plan.meals.indexOf(request.params.mealId);
+      if (index > -1) plan.meals.splice(index, 1);
+      plan.save((err, plan) => {
+        if (err) return response.status(500).json({ error: err });
+        response.json({ success: true });
+      });
+    } else {
+      return response.status(200).json({ success: true });
+    }
+  });
+});
+
 router.get('/meals/:course', (request, response) => {
   console.log(`/meals/:course course:${request.params.course}`);
   Meal.find({ courses: request.params.course }, (err, meals) => {

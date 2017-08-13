@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
 const server = express();
 const port = process.env.PORT || 9080;
@@ -12,6 +13,9 @@ mongoose.connect(mongoUri, {
 });
 
 server.use(cors());
+server.use(bodyParser.json());
+server.use(bodyParser.urlencoded({ extended: true }));
+
 server.use(mealsRouter);
 
 server.get('/', (request, response) => {

@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/katerynabond/meal-planning-api#readme",
   "dependencies": {
+    "body-parser": "^1.17.2",
     "cors": "^2.8.4",
     "express": "^4.15.3",
     "mongoose": "^4.11.6"
