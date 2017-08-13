@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-// test data
 const meal1 = require('./testdata/meal1');
 const mealsList = require('./testdata/meals');
 const Meal = require('./models/meal.model');
@@ -27,6 +26,7 @@ router.get('/plan/:week/:course', (request, response) => {
     });
 });
 
+// add to plan
 router.post('/plan/:week/:course', (request, response) => {
   console.log(`[POST] plan add week:${request.params.week} course:${request.params.course} mealId:${request.body.mealId}`);
   var date = new Date(request.params.week);
@@ -51,6 +51,7 @@ router.post('/plan/:week/:course', (request, response) => {
   });
 });
 
+// remove from plan
 router.delete('/plan/:week/:course/:mealId', (request, response) => {
   console.log(`[DELETE] plan add week:${request.params.week} course:${request.params.course} mealId:${request.params.mealId}`);
   var date = new Date(request.params.week);
@@ -68,16 +69,28 @@ router.delete('/plan/:week/:course/:mealId', (request, response) => {
   });
 });
 
-router.get('/meals/:course', (request, response) => {
-  console.log(`/meals/:course course:${request.params.course}`);
-  Meal.find({ courses: request.params.course }, (err, meals) => {
+router.get('/meals/:week/:course', (request, response) => {
+  console.log(`/meals/ course:${request.params.course}`);
+  var date = new Date(request.params.week);
+  Plan.findOne({ week: date, course: request.params.course }, (err, plan) => {
     if (err) return response.status(500).json({ error: err });
-    response.json(meals);
+    if (!plan) plan = {meals:[]};
+    Meal.find({ courses: request.params.course }, (err, meals) => {
+      if (err) return response.status(500).json({ error: err });
+      var mealsToReturn = meals.map((meal) => {
+        return {
+          _id: meal._id,
+          title: meal.title,
+          description: meal.description,
+          calories: meal.calories,
+          cookingTime: meal.cookingTime,
+          added: plan.meals.indexOf(meal._id) > -1,
+          likes: meal.likes
+        };
+      });
+      response.json(mealsToReturn);
+    });
   });
-
-  // var list = JSON.parse(JSON.stringify(mealsList));
-  // list[0].title += ` (${request.params.course})`;
-  // response.json(list);
 });
 
 
