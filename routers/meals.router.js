@@ -96,7 +96,8 @@ router.get('/meals/:week/:course', (request, response) => {
           calories: meal.calories,
           cookingTime: meal.cookingTime,
           added: plan.meals.indexOf(meal._id) > -1,
-          likes: meal.likes
+          likes: meal.likes,
+          image: meal.image
         };
       });
       response.json(mealsToReturn);

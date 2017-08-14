@@ -9,6 +9,7 @@ const mealSchema = new Schema({
     calories: String,
     cookingTime: String,
     likes: Number,
+    image: String,
     courses: [String]
 });
 
