@@ -8,6 +8,9 @@ const cors = require('cors');
 const mealsRouter = require('./routers/meals.router');
 
 const { mongoUri } = require('./credentials');
+
+mongoUri = mongoUri || process.env.mongoUri;
+
 mongoose.connect(mongoUri, {
   useMongoClient: true
 });
