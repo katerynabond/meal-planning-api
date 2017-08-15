@@ -33,7 +33,12 @@ router.get('/plan/:week/:course', (request, response) => {
     .populate('meals')
     .exec((err, plan) => {
       if (err) return response.status(500).json({ error: err });
-      response.json(plan.meals);
+      if (plan) {
+        response.json(plan.meals);
+      } else {
+        response.json();
+      }
+      
     });
 });
 
