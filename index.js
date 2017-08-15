@@ -7,7 +7,7 @@ const port = process.env.PORT || 9080;
 const cors = require('cors');
 const mealsRouter = require('./routers/meals.router');
 
-const { mongoUri } = require('./credentials');
+var { mongoUri } = require('./credentials');
 
 mongoUri = mongoUri || process.env.mongoUri;
 
